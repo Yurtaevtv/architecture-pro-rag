@@ -65,7 +65,7 @@
 ## Варианты внедрения
 |Подход|	LLM|	Эмбеддинг|	Векторная БД|	Целевая аудитория|
 |-|-|-|-|-|
-|MVP|	DeepSeek-R1 8B|	BGE-M3|	ChromaDB|	5–10 пользователей, проверка концепции|
+|MVP|	DeepSeek-R1 1.5B|	all-MiniLM-L6-v2|	ChromaDB|	5–10 пользователей, проверка концепции|
 |Production|	DeepSeek-R1 32B|	Qwen3-Embedding-8B|	Qdrant|	20–50 пользователей, отдел компании|
 |Enterprise|	DeepSeek-R1 70B (или ансамбль моделей)|	Qwen3-Embedding-8B + BGE-M3|	Milvus|	100+ пользователей, кластерная установка|
 

@@ -1,0 +1,71 @@
+services:
+  chromadb:
+    image: chromadb/chroma:latest  # Более новая версия с ARM поддержкой
+    platform: linux/arm64
+    container_name: chromadb-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+      - ALLOW_RESET=TRUE
+      - CHROMA_SERVER_CORS_ALLOW_ORIGINS=['*']
+    restart: unless-stopped
+    networks:
+      - rag-network
+
+  chromadb_admin:
+    image: fengzhichao/chromadb-admin
+    container_name: chromadb_viewer
+    ports: 
+      - 8001:3001
+    environment:
+      - CHROMA_SERVER_URL=http://chromadb:8000
+    depends_on:
+      - chromadb
+    networks:
+      - rag-network
+
+  ingestor:
+    build:
+      context: ./ingestor
+      platforms:
+        - linux/arm64     
+    container_name: rag-ingestor
+    depends_on:
+      - chromadb
+    environment:
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - COLLECTION_NAME=documents
+      - EMBEDDING_MODEL=LaBSE
+      - CHUNK_SIZE=500
+      - CHUNK_OVERLAP=50
+    command: python -u base_ingestor.py
+    networks:
+      - rag-network
+
+  # api:
+  #   build:
+  #     context: ./rag_api
+  #   container_name: rag-api
+  #   env_file: "./rag_api/.env"
+  #   ports: 
+  #     - 10001:10001
+  #   depends_on:
+  #     - chromadb
+  #   command: python -u app.py
+  #   networks:
+  #     - rag-network
+    
+
+volumes:
+  chroma-data:
+    driver: local
+
+networks:
+  rag-network:
+    driver: bridge
