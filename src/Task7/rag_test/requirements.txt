@@ -1,0 +1,7 @@
+aiohttp==3.13.3
+numpy==2.4.3
+loguru==0.7.2
+tqdm==4.65.0
+pandas==3.0.1
+matplotlib==3.10.8
+seaborn==0.13.2
